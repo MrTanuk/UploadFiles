@@ -88,7 +88,7 @@ def upload_file():
     return render_template('upload.html')
 
 if __name__ == '__main__':
-    if os.environ.get('ENV') == 'production':
+    if os.environ.get('HOSTING'):
         from waitress import serve
         serve(app, host='0.0.0.0', port=8080)
     else:

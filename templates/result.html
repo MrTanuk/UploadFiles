@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <article class="card">
+        <header>
+            <h1 class="title">📊 Resultados del Análisis</h1>
+        </header>
+        <section class="file-info">
+            <dl>
+                <div class="info-item">
+                    <dt class="label">Nombre:</dt>
+                    <dd class="value">{{ filename }}</dd>
+                </div>
+                <div class="info-item">
+                    <dt class="label">Tipo:</dt>
+                    <dd class="value">{{ file_type }}</dd>
+                </div>
+                <div class="info-item">
+                    <dt class="label">Tamaño:</dt>
+                    <dd class="value">{{ size }}</dd>
+                </div>
+            </dl>
+        </section>
+
+        {% if is_text %}
+            <section class="text-analysis">
+                <h2>📝 Estadísticas Básicas</h2>
+                <div class="stats-grid">
+                    <div class="stat">
+                        <div class="stat-number">{{ lines }}</div>
+                        <div class="stat-label">Líneas</div>
+                    </div>
+                    <div class="stat">
+                        <div class="stat-number">{{ words }}</div>
+                        <div class="stat-label">Palabras</div>
+                    </div>
+                    <div class="stat">
+                        <div class="stat-number">{{ characters }}</div>
+                        <div class="stat-label">Caracteres</div>
+                    </div>
+                </div>
+            </section>
+        {% endif %}
+
+        <footer>
+            <a href="/" class="btn">Analizar otro archivo</a>
+        </footer>
+    </article>
+{% endblock %}

@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <article class="card">
+        <header>
+            <h1 class="title">📁 Subir Archivo</h1>
+        </header>
+        
+        {% with messages = get_flashed_messages() %}
+            {% if messages %}
+                <div role="alert" class="alert">
+                    {% for message in messages %}
+                        <p>{{ message }}</p>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        {% endwith %}
+
+        <section class="upload-form">
+            <form method="post" enctype="multipart/form-data">
+                <div class="file-input">
+                    <input type="file" name="file" id="file" class="custom-file-input" onchange="updateFileName()">
+                    <label for="file" class="file-label">
+                        <span id="file-button">Seleccionar archivo</span>
+                        <span id="file-name" class="file-name"></span>
+                    </label>
+                </div>
+                <button type="submit" class="btn">Analizar Archivo</button>
+            </form>
+        </section>
+    </article>
+<script>
+    function updateFileName() {
+        const fileInput = document.getElementById('file');
+        const fileName = document.getElementById('file-name');
+        
+        if (fileInput.files.length > 0) {
+            fileName.textContent = fileInput.files[0].name;
+            fileName.style.opacity = '1';
+        } else {
+            fileName.textContent = '';
+            fileName.style.opacity = '0';
+        }
+    }
+</script>
+{% endblock %}

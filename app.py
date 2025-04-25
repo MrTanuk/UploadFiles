@@ -23,7 +23,7 @@ app.wsgi_app = ProxyFix(app.wsgi_app, x_for=1, x_proto=1, x_host=1)
 
 # Configuraciones de la aplicación
 app.config['MAX_CONTENT_LENGTH'] = 10 * (1024**2)  # 10 MiB
-ALLOWED_MIME_TYPES = {'text/plain', 'text/csv', 'application/json'}
+ALLOWED_MIME_TYPES = {'text/plain', 'text/csv', 'text/markdown'}
 
 def convert_size(size):
     if size == 0:

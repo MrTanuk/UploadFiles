@@ -13,9 +13,9 @@ app.secret_key = os.environ.get('SECRET_KEY', os.urandom(24))
 
 # Configuración de seguridad HTTPS
 talisman = Talisman(
-    app,
-    content_security_policy=None,
-    force_https=True
+	app,
+	content_security_policy=None,
+	force_https=True
 )
 
 # Configuración para proxy inverso de Render
@@ -26,66 +26,67 @@ app.config['MAX_CONTENT_LENGTH'] = 10 * (1024**2)  # 10 MiB
 ALLOWED_MIME_TYPES = {'text/plain', 'text/csv', 'text/markdown'}
 
 def convert_size(size):
-    if size == 0:
-        return "0B"
-    
-    units = ["B", "KiB", "MiB", "GiB", "TiB", "PiB"]
-    for unit in units:
-        if size < 1024:
-            break
-        size /= 1024
-    return f"{size:.2f} {unit}"
+	if size == 0:
+		return "0B"
+	
+	units = ["B", "KiB", "MiB", "GiB", "TiB", "PiB"]
+	for unit in units:
+		if size < 1024:
+			break
+		size /= 1024
+	return f"{size:.2f} {unit}"
 
 @app.route('/', methods=['GET', 'POST'])
 def upload_file():
-    if request.method == 'POST':
-        if 'file' not in request.files:
-            flash('No se encontró el archivo')
-            return redirect(request.url)
-            
-        file = request.files['file']
-        
-        if file.filename == '':
-            flash('No se seleccionó ningún archivo')
-            return redirect(request.url)
-            
-        if file:
-            filename = secure_filename(file.filename)
-            file_type = file.mimetype
+	if request.method == 'POST':
+		if 'file' not in request.files:
+			flash('No se encontró el archivo')
+			return redirect(request.url)
+			
+		file = request.files['file']
+		
+		if file.filename == '':
+			flash('No se seleccionó ningún archivo')
+			return redirect(request.url)
+			
+		if file:
+			filename = secure_filename(file.filename)
+			file_type = file.mimetype
 
-            # Validación MIME type estricta
-            if file_type not in ALLOWED_MIME_TYPES:
-                flash('Tipo de archivo no permitido')
-                return redirect(request.url)
-            
-            # Calcular tamaño
-            file.seek(0, os.SEEK_END)
-            size_bytes = file.tell()
-            file.seek(0)
-            
-            try:
-                content = file.read().decode('utf-8')
-                lines = len(content.splitlines())
-                words = len(content.split())
-                characters = len(content)
-                
-                return render_template('result.html',
-                                    filename=filename,
-                                    file_type=file_type,
-                                    size=convert_size(size_bytes),
-                                    lines=lines,
-                                    words=words,
-                                    characters=characters)
-                                    
-            except UnicodeDecodeError:
-                flash('El archivo no es texto válido')
-                return redirect(request.url)
-            except Exception as e:
-                flash('Error procesando archivo')
-                app.logger.error(f'Error: {str(e)}')
-                return redirect(request.url)
-    
-    return render_template('upload.html')
+			# Validación MIME type estricta
+			if file_type not in ALLOWED_MIME_TYPES:
+				flash('Tipo de archivo no permitido')
+				return redirect(request.url)
+			
+			# Calcular tamaño
+			file.seek(0, os.SEEK_END)
+			size_bytes = file.tell()
+			file.seek(0)
+			
+			try:
+				content = file.read().decode('utf-8')
+				lines = len(content.splitlines())
+				words = len(content.split())
+				characters = len(content)
+				
+				return render_template(
+					'result.html',
+					filename=filename,
+					file_type=file_type,
+					size=convert_size(size_bytes),
+					lines=lines,
+					words=words,
+					characters=characters)
+									
+			except UnicodeDecodeError:
+				flash('El archivo no es texto válido')
+				return redirect(request.url)
+			except Exception as e:
+				flash('Error procesando archivo')
+				app.logger.error(f'Error: {str(e)}')
+				return redirect(request.url)
+	
+	return render_template('upload.html')
 
 if __name__ == '__main__':
     if os.environ.get('HOSTING'):

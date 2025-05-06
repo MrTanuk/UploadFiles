@@ -143,7 +143,7 @@ def details_page():
 
 	try:
 		# Get location info via public IP
-		response = requests.get('https://ipinfo.io/json', timeout=5)
+		response = requests.get('https://ipinfo.io/json', timeout=3)
 		ip_data = response.json()
 		city = ip_data.get('city', 'Unknown')
 		country = ip_data.get('country', 'Unknown')

@@ -67,9 +67,6 @@ contnt = None
 @app.route('/', methods=['GET', 'POST'])
 def upload_file():
 	global contnt
-	if 'filedata' in session:
-		session.clear()
-		contnt = None
 
 	if request.method == 'POST':
 		if 'file' not in request.files:
@@ -138,6 +135,10 @@ def upload_file():
 				words=words,
 				characters=characters
 			)
+
+	if 'filedata' in session:
+		session.clear()
+		contnt = None
 
 	return render_template('upload.html')
 

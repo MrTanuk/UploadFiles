@@ -169,7 +169,8 @@ def details_page():
 		characters=session['filedata']['characters'],
 		content=session['filedata']['content'],
 		location=location,
-		sys_time=current_time
+		sys_time=current_time,
+		ipinfo_token=os.environ.get('IPINFO_TOKEN')
 	)
 
 if __name__ == '__main__':

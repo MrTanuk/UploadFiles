@@ -47,7 +47,7 @@
         </section>
 
 		<section class="file-info">
-			<h2>📄 Información del host</h2>
+			<h2>📄 Información del Host</h2>
             <dl>
                 <div class="info-item">
                     <dt class="label">Ubicación:</dt>
@@ -59,7 +59,54 @@
                 </div>
             </dl>
         </section>
+		
+		<section class="file-info">
+			<h2>📄 Información del Usuario</h2>
+            <dl id="user-info">
+                <div class="info-item">
+                    <dt class="label">Ubicación:</dt>
+                    <dd class="value"></dd>
+                </div>
+                <div class="info-item">
+                    <dt class="label">Fecha y hora:</dt>
+                    <dd class="value"></dd>
+                </div>
+            </dl>
+        </section>
+
 
 		<a href="/" class="btn">Analizar otro archivo</a>
     </article>
+	
+	<script>
+		async function getClientInfo() {
+			let location_ = "Unknown";
+
+			try {
+				const response = await fetch('https://ipinfo.io/json?token={{ ipinfo_token }}');
+				const ipData = await response.json();
+				const city = ipData.city || "Unknown";
+				const country = ipData.country || "Unknown";
+				location_ = `${city}, ${country}`;
+			} catch (error) {
+				location_ = "Location undetermined";
+				console.error("Location detection failed:", error);
+			}
+
+			const now = new Date();
+			const systemTime = now.toISOString().replace('T', ' ').substring(0, 19);
+
+			return {
+				location_,
+				systemTime
+			};
+		}
+
+		getClientInfo().then(info => {
+			const userSection = document.getElementById('user-info');
+
+			userSection.children[0].children[1].innerText = info.location_;
+			userSection.children[1].children[1].innerText = info.systemTime;
+		});	
+	</script>
 {% endblock %}

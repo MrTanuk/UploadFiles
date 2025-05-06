@@ -12,15 +12,15 @@ load_dotenv()
 app = Flask(__name__)
 app.secret_key = os.environ.get('SECRET_KEY', os.urandom(24))
 
+# Configuración para proxy inverso de Render
+app.wsgi_app = ProxyFix(app.wsgi_app, x_for=1, x_proto=1, x_host=1)
+
 # Configuración de seguridad HTTPS
 talisman = Talisman(
 	app,
 	content_security_policy=None,
 	force_https=True
 )
-
-# Configuración para proxy inverso de Render
-app.wsgi_app = ProxyFix(app.wsgi_app, x_for=1, x_proto=1, x_host=1)
 
 # Configuraciones de la aplicación
 app.config['MAX_CONTENT_LENGTH'] = 10 * (1024**2)  # 10 MiB

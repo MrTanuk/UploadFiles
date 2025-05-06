@@ -1,6 +1,6 @@
 # UploadFiles
 
-Un repositorio *forkeado* de @MrTanuk.
+Un repositorio *forkeado* de [@MrTanuk](https://github.com/MrTanuk).<br>
 Desplegando en Render: https://uploadfiles-immau14.onrender.com.
 
 ## Cambios
@@ -23,3 +23,13 @@ Desplegando en Render: https://uploadfiles-immau14.onrender.com.
   - Variable de entorno `SECRET_KEY` para la seguridad de las cookies.
   - Si el archivo es muy largo, te dará los primeros 3900 caracteres de él, ya que si la cookie pesa mucho, no se guardará.
   - Se borra al estar en la página de inicio.
+
+## Fotos de la Interfaz
+
+|Upload|Results|Details|
+|:-:|:-:|:-:|
+|![image](https://github.com/user-attachments/assets/68f8f5f2-0e9a-4b48-a0b6-3ad3b729a73f)|![image](https://github.com/user-attachments/assets/b55ed239-6f64-4079-bedf-17684664f2ab)|![image](https://github.com/user-attachments/assets/d6197139-8b84-427a-abd0-316876882a17)|
+
+
+
+

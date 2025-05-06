@@ -1,46 +1,79 @@
 {% extends "base.html" %}
 
 {% block content %}
-    <article class="card">
-        <header>
-            <h1 class="title">📁 Subir un archivo de texto</h1>
-        </header>
-        
-        {% with messages = get_flashed_messages() %}
-            {% if messages %}
-                <div role="alert" class="alert">
-                    {% for message in messages %}
-                        <p>{{ message }}</p>
-                    {% endfor %}
-                </div>
-            {% endif %}
-        {% endwith %}
+	<article class="card">
+		<header>
+			<h1 class="title">📁 Subir un archivo de texto</h1>
+		</header>
 
-        <section class="upload-form">
-            <form method="post" enctype="multipart/form-data">
-                <div class="file-input">
-                    <input type="file" name="file" id="file" class="custom-file-input" onchange="updateFileName()">
-                    <label for="file" class="file-label">
-                        <span id="file-button">Seleccionar archivo</span>
-                        <span id="file-name" class="file-name"></span>
-                    </label>
-                </div>
-                <button type="submit" class="btn">Analizar Archivo</button>
-            </form>
-        </section>
-    </article>
+		{% with messages = get_flashed_messages() %}
+			{% if messages %}
+				<div role="alert" class="alert">
+					{% for message in messages %}
+						<p>{{ message }}</p>
+					{% endfor %}
+				</div>
+			{% endif %}
+		{% endwith %}
+
+		<section class="upload-form">
+			<form method="post" enctype="multipart/form-data">
+				<div class="file-input">
+					<input type="file" name="file" id="file"
+					accept="
+					   .txt, .md, .env, .cpp, .fpc,
+					   text/plain, 
+					   text/markdown, 
+					   text/x-c++src, 
+					   text/x-pascal,
+					   text/csv, 
+					   application/json, 
+					   application/xml, 
+					   text/x-yaml, 
+					   text/x-ini, 
+					   text/x-shellscript, 
+					   text/x-python, 
+					   text/javascript, 
+					   text/html, 
+					   text/css
+					" hidden>
+					<label id="file-button">
+						Seleccionar archivo
+						<p id="file-name">Hola</p>
+					</label>
+				</div>
+				<button type="submit" class="btn">Analizar Archivo</button>
+			</form>
+		</section>
+	</article>
 <script>
-    function updateFileName() {
-        const fileInput = document.getElementById('file');
-        const fileName = document.getElementById('file-name');
-        
-        if (fileInput.files.length > 0) {
-            fileName.textContent = fileInput.files[0].name;
-            fileName.style.opacity = '1';
-        } else {
-            fileName.textContent = '';
-            fileName.style.opacity = '0';
-        }
-    }
+	const fileInput = document.getElementById('file');
+	const fileName = document.getElementById('file-name');
+	const fileButton = document.getElementById('file-button');
+
+    fileName.style.display = 'none';
+
+	const dropEvents = ['dragenter', 'dragover', 'dragleave', 'drop'];
+
+	dropEvents.forEach(event => {
+		fileButton.addEventListener(event, e => e.preventDefault());
+	});
+
+	fileButton.addEventListener('click', () => {
+		fileInput.click();
+	});
+
+	fileInput.addEventListener('change', () => {
+		fileName.innerText = ` ${fileInput.files[0].name}`;
+		fileName.style.display = 'flex';
+	});
+
+	fileButton.addEventListener('drop', e => {
+		fileInput.files = e.dataTransfer.files;
+		const file = fileInput.files[0];
+
+		fileName.innerText = ` ${fileInput.files[0].name}`;
+		fileName.style.display = 'flex';
+	});
 </script>
 {% endblock %}

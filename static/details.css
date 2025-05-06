@@ -1,0 +1,21 @@
+.content-section {
+  min-width: 95%;
+  margin-bottom: 10px;
+  /* Contener el ancho del pre */
+  overflow-x: auto;
+}
+
+.file-content {
+  margin-top: 10px;
+  white-space: pre-wrap;       /* Permite saltos de línea */
+  word-break: break-all;       /* Fuerza ruptura de palabras largas */
+  background: #f5f5f5;
+  padding: 1rem;
+  border-radius: 4px;
+  max-height: 400px;
+  width: fit-content;          /* Ajusta el ancho al contenido mínimo */
+  min-width: 100%;            /* Ocupa todo el ancho del contenedor padre */
+  box-sizing: border-box;
+  overflow-x: auto;
+  font-family: monospace;      /* Mantiene formato de pre pero permite wrap */
+}

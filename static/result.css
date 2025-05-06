@@ -64,3 +64,19 @@ article.card {
     color: #6c757d;
     margin-top: 0.5rem;
 }
+
+#result-buttons {
+	display: flex;
+	flex-flow: row wrap;
+	justify-content: center;
+	align-items: center;
+	gap: 20px;
+}
+
+.green {
+	background-color: #2de15a;
+}
+
+.green:hover {
+	background-color: #1dcd49;
+}

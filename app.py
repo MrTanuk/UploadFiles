@@ -1,9 +1,10 @@
-from flask import Flask, render_template, request, redirect, url_for, flash
+from flask import Flask, render_template, request, redirect, url_for, flash, session, jsonify
 from werkzeug.utils import secure_filename
 from werkzeug.middleware.proxy_fix import ProxyFix
 from flask_talisman import Talisman
 import os
 from dotenv import load_dotenv
+from markupsafe import escape
 
 # Cargar variables de entorno
 load_dotenv()
@@ -28,7 +29,7 @@ ALLOWED_MIME_TYPES = {'text/plain', 'text/csv', 'text/markdown'}
 def convert_size(size):
 	if size == 0:
 		return "0B"
-	
+
 	units = ["B", "KiB", "MiB", "GiB", "TiB", "PiB"]
 	for unit in units:
 		if size < 1024:
@@ -38,55 +39,90 @@ def convert_size(size):
 
 @app.route('/', methods=['GET', 'POST'])
 def upload_file():
+	if 'filedata' in session:
+		session.clear()
+
 	if request.method == 'POST':
 		if 'file' not in request.files:
 			flash('No se encontró el archivo')
 			return redirect(request.url)
-			
+
 		file = request.files['file']
-		
+
 		if file.filename == '':
 			flash('No se seleccionó ningún archivo')
 			return redirect(request.url)
-			
+
 		if file:
 			filename = secure_filename(file.filename)
 			file_type = file.mimetype
 
-			# Validación MIME type estricta
 			if file_type not in ALLOWED_MIME_TYPES:
 				flash('Tipo de archivo no permitido')
 				return redirect(request.url)
-			
-			# Calcular tamaño
-			file.seek(0, os.SEEK_END)
-			size_bytes = file.tell()
-			file.seek(0)
-			
-			try:
-				content = file.read().decode('utf-8')
-				lines = len(content.splitlines())
-				words = len(content.split())
-				characters = len(content)
-				
-				return render_template(
-					'result.html',
-					filename=filename,
-					file_type=file_type,
-					size=convert_size(size_bytes),
-					lines=lines,
-					words=words,
-					characters=characters)
-									
-			except UnicodeDecodeError:
-				flash('El archivo no es texto válido')
+
+			extension = file.filename.split('.')[-1]
+
+			data = file.read()
+			size_bytes = len(data)
+
+			# Lista de codificaciones a probar
+			encodings = ['utf-8', 'utf-8-sig', 'latin-1', 'iso-8859-1', 'cp1252']
+			content = None
+
+			# Intentar diferentes codificaciones
+			for encoding in encodings:
+				try:
+					content = data.decode(encoding)
+					break
+				except UnicodeDecodeError:
+					continue
+
+			if not content:
+				flash('El archivo usa una codificación no soportada')
 				return redirect(request.url)
-			except Exception as e:
-				flash('Error procesando archivo')
-				app.logger.error(f'Error: {str(e)}')
-				return redirect(request.url)
-	
+
+			# Procesar el contenido
+			lines = len(content.splitlines())
+			words = len(content.split())
+			characters = len(content)
+
+			session['filedata'] = {
+				'filename' : filename,
+				'file_type' : file_type,
+				'extension' : extension,
+				'size' : convert_size(size_bytes),
+				'lines' : lines,
+				'words' : words,
+				'characters' : characters,
+				'content' : escape(content)
+			}
+
+			return render_template(
+				'result.html',
+				filename=filename,
+				file_type=file_type,
+				size=convert_size(size_bytes),
+				lines=lines,
+				words=words,
+				characters=characters
+			)
+
 	return render_template('upload.html')
+
+@app.route('/details', methods=['GET'])
+def details_page():
+	return render_template(
+		'details.html',
+		filename=session['filedata']['filename'],
+		file_type=session['filedata']['file_type'],
+		extension=session['filedata']['extension'],
+		size=session['filedata']['size'],
+		lines=session['filedata']['lines'],
+		words=session['filedata']['words'],
+		characters=session['filedata']['characters'],
+		content=session['filedata']['content']
+	)
 
 if __name__ == '__main__':
     if os.environ.get('HOSTING'):

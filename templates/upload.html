@@ -19,7 +19,7 @@
 		<section class="upload-form">
 			<form method="post" enctype="multipart/form-data">
 				<div class="file-input">
-					<input type="file" name="file" id="file" accept=".txt, .csv, .md" hidden>
+					<input type="file" name="file" id="file" accept=".txt, .csv, .md, .gitignore" hidden>
 					<label id="file-button">
 						Seleccionar archivo
 						<p id="file-name">Hola</p>
@@ -36,11 +36,25 @@
 
     fileName.style.display = 'none';
 
+	const dropEvents = ['dragenter', 'dragover', 'dragleave', 'drop'];
+
+	dropEvents.forEach(event => {
+		fileButton.addEventListener(event, e => e.preventDefault());
+	});
+
 	fileButton.addEventListener('click', () => {
 		fileInput.click();
 	});
 
 	fileInput.addEventListener('change', () => {
+		fileName.innerText = ` ${fileInput.files[0].name}`;
+		fileName.style.display = 'flex';
+	});
+
+	fileButton.addEventListener('drop', e => {
+		fileInput.files = e.dataTransfer.files;
+		const file = fileInput.files[0];
+
 		fileName.innerText = ` ${fileInput.files[0].name}`;
 		fileName.style.display = 'flex';
 	});

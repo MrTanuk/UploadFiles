@@ -1,0 +1,16 @@
+.file-content {
+	margin-top: 10px;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+    background: #f5f5f5;
+    padding: 1rem;
+    border-radius: 4px;
+    overflow-x: auto;
+    max-height: 400px;
+	min-width: 100%;
+}
+
+.content-section {
+	min-width: 95%;
+	margin-bottom: 10px;
+}

@@ -140,6 +140,7 @@ def upload_file():
 
 @app.route('/details', methods=['GET'])
 def details_page():	
+	global contnt
 	ses = session
 	con = contnt
 

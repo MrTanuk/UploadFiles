@@ -156,7 +156,7 @@ def details_page():
 		location = f"Ubicación indeterminada ({str(e)})"
 
 	# Get formatted system time
-	current_time = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+	current_time = datetime.datetime.now().strftime("%d/%m/%Y %H:%M:%S")
 
 	return render_template(
 		'details.html',

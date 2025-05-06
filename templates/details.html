@@ -94,7 +94,15 @@
 			}
 
 			const now = new Date();
-			const systemTime = now.toISOString().replace('T', ' ').substring(0, 19);
+			const systemTime = now.toLocaleString('en-US', {
+				year: 'numeric',
+				month: '2-digit',
+				day: '2-digit',
+				hour: '2-digit',
+				minute: '2-digit',
+				second: '2-digit',
+				hour12: false
+			}).replace(/,/g, '');
 
 			return {
 				location_,

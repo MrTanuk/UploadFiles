@@ -13,7 +13,7 @@ app = Flask(__name__)
 app.secret_key = os.environ.get('SECRET_KEY', os.urandom(24))
 
 # Configuración para proxy inverso de Render
-app.wsgi_app = ProxyFix(app.wsgi_app, x_for=1, x_proto=1, x_host=1)
+app.wsgi_app = ProxyFix(app.wsgi_app, x_for=2, x_proto=2)
 
 # Configuración de seguridad HTTPS
 talisman = Talisman(

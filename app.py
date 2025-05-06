@@ -62,12 +62,8 @@ def convert_size(size):
 		size /= 1024
 	return f"{size:.2f} {unit}"
 
-contnt = None
-
 @app.route('/', methods=['GET', 'POST'])
 def upload_file():
-	global contnt
-
 	if request.method == 'POST':
 		if 'file' not in request.files:
 			flash('No se encontró el archivo')
@@ -120,11 +116,9 @@ def upload_file():
 				'size' : convert_size(size_bytes),
 				'lines' : lines,
 				'words' : words,
-				'characters' : characters
+				'characters' : characters,
+				'content' : content if characters <= 3900 else content[:3900] + "\n\n (Este archivo es muy largo)"
 			}
-
-			# global contnt
-			contnt = escape(content)
 
 			return render_template(
 				'result.html',
@@ -136,28 +130,23 @@ def upload_file():
 				characters=characters
 			)
 
+	if 'filedata' in session:
+		session.clear()
+
 	return render_template('upload.html')
 
 @app.route('/details', methods=['GET'])
 def details_page():	
-	global contnt
-	ses = session
-	con = contnt
-
-	if 'filedata' in session and contnt != None:
-		session.clear()
-		contnt = None
-
 	return render_template(
 		'details.html',
-		filename=ses['filedata']['filename'],
-		file_type=ses['filedata']['file_type'],
-		extension=ses['filedata']['extension'],
-		size=ses['filedata']['size'],
-		lines=ses['filedata']['lines'],
-		words=ses['filedata']['words'],
-		characters=ses['filedata']['characters'],
-		content=con
+		filename=session['filedata']['filename'],
+		file_type=session['filedata']['file_type'],
+		extension=session['filedata']['extension'],
+		size=session['filedata']['size'],
+		lines=session['filedata']['lines'],
+		words=session['filedata']['words'],
+		characters=session['filedata']['characters'],
+		content=session['filedata']['content']
 	)
 
 if __name__ == '__main__':

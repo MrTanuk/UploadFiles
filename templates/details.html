@@ -12,7 +12,7 @@
                 <pre class="file-content">{{ content }}</pre>
             </section>
         {% endif %}
-		
+
         <section class="file-info">
             <dl>
                 <div class="info-item">
@@ -42,6 +42,20 @@
 				<div class="info-item">
                     <dt class="label">Caracteres:</dt>
                     <dd class="value">{{ characters }}</dd>
+                </div>
+            </dl>
+        </section>
+
+		<section class="file-info">
+			<h2>📄 Información del usuario</h2>
+            <dl>
+                <div class="info-item">
+                    <dt class="label">Ubicación:</dt>
+                    <dd class="value">{{ location }}</dd>
+                </div>
+                <div class="info-item">
+                    <dt class="label">Fecha y hora:</dt>
+                    <dd class="value">{{ sys_time }}</dd>
                 </div>
             </dl>
         </section>

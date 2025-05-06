@@ -5,6 +5,8 @@ from werkzeug.utils import secure_filename
 import os
 from dotenv import load_dotenv
 from markupsafe import escape
+import datetime
+import requests
 
 # Cargar variables de entorno
 load_dotenv()
@@ -137,6 +139,25 @@ def upload_file():
 
 @app.route('/details', methods=['GET'])
 def details_page():	
+	location = "Unknown"
+
+	try:
+		# Get location info via public IP
+		response = requests.get('https://ipinfo.io/json', timeout=5)
+		ip_data = response.json()
+		city = ip_data.get('city', 'Unknown')
+		country = ip_data.get('country', 'Unknown')
+		location = f"{city}, {country}"
+	except requests.exceptions.RequestException:
+		location = "Location undetermined (connection failed)"
+	except ValueError:
+		location = "Location undetermined (invalid response)"
+	except Exception as e:
+		location = f"Ubicación indeterminada ({str(e)})"
+
+	# Get formatted system time
+	current_time = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+
 	return render_template(
 		'details.html',
 		filename=session['filedata']['filename'],
@@ -146,7 +167,9 @@ def details_page():
 		lines=session['filedata']['lines'],
 		words=session['filedata']['words'],
 		characters=session['filedata']['characters'],
-		content=session['filedata']['content']
+		content=session['filedata']['content'],
+		location=location,
+		sys_time=current_time
 	)
 
 if __name__ == '__main__':

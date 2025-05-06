@@ -24,7 +24,32 @@ app.wsgi_app = ProxyFix(app.wsgi_app, x_for=1, x_proto=1, x_host=1)
 
 # Configuraciones de la aplicación
 app.config['MAX_CONTENT_LENGTH'] = 10 * (1024**2)  # 10 MiB
-ALLOWED_MIME_TYPES = {'text/plain', 'text/csv', 'text/markdown'}
+# ALLOWED_MIME_TYPES = {
+	# Extensiones problemáticas reportadas
+	# 'text/markdown',        # .md (oficial según IANA)
+	# 'text/plain',           # .env, .gitignore, .dockerignore, etc.
+	# 'text/x-c++src',        # .cpp y .h (estándar para C++)
+	# 'text/x-pascal',        # .fpc (Free Pascal)
+
+	# 'text/csv',
+	# 'text/tab-separated-values',  # .tsv
+	# 'application/json',
+	# 'application/xml',
+	# 'text/x-yaml',          # .yml, .yaml
+	# 'text/x-ini',           # .ini, .conf
+	# 'text/x-shellscript',   # .sh, .bash
+	# 'text/x-python',        # .py
+	# 'text/javascript',      # .js
+	# 'text/html',
+	# 'text/css',
+	# 'application/x-toml',   # .toml
+	# 'text/x-rst',           # .rst
+	# 'text/x-tex',           # .tex
+	# 'text/x-ruby',          # .rb
+	# 'text/x-go',            # .go
+	# 'text/x-swift',         # .swift
+	# 'text/x-sql'            # .sql
+# }
 
 def convert_size(size):
 	if size == 0:
@@ -37,10 +62,14 @@ def convert_size(size):
 		size /= 1024
 	return f"{size:.2f} {unit}"
 
+contnt = None
+
 @app.route('/', methods=['GET', 'POST'])
 def upload_file():
+	global contnt
 	if 'filedata' in session:
 		session.clear()
+		contnt = None
 
 	if request.method == 'POST':
 		if 'file' not in request.files:
@@ -57,9 +86,9 @@ def upload_file():
 			filename = secure_filename(file.filename)
 			file_type = file.mimetype
 
-			if file_type not in ALLOWED_MIME_TYPES:
-				flash('Tipo de archivo no permitido')
-				return redirect(request.url)
+			# if file_type not in ALLOWED_MIME_TYPES:
+				# flash('Tipo de archivo no permitido')
+				# return redirect(request.url)
 
 			extension = file.filename.split('.')[-1]
 
@@ -94,9 +123,11 @@ def upload_file():
 				'size' : convert_size(size_bytes),
 				'lines' : lines,
 				'words' : words,
-				'characters' : characters,
-				'content' : escape(content)
+				'characters' : characters
 			}
+
+			# global contnt
+			contnt = escape(content)
 
 			return render_template(
 				'result.html',
@@ -121,12 +152,12 @@ def details_page():
 		lines=session['filedata']['lines'],
 		words=session['filedata']['words'],
 		characters=session['filedata']['characters'],
-		content=session['filedata']['content']
+		content=contnt
 	)
 
 if __name__ == '__main__':
-    if os.environ.get('HOSTING'):
-        from waitress import serve
-        serve(app, host='0.0.0.0', port=8080)
-    else:
-        app.run(host='0.0.0.0', port=8080, debug=True)
+	if os.environ.get('HOSTING'):
+		from waitress import serve
+		serve(app, host='0.0.0.0', port=8080)
+	else:
+		app.run(host='0.0.0.0', port=8080, debug=True)
